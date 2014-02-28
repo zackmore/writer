@@ -51,13 +51,13 @@ documentation['init'] = '''
             main.js
 '''
 
-documentation['watch']['start'] = '''
-    Start a pyinofity thread which is watching on the source folder
-'''
-
-documentation['watch']['stop'] = '''
-    Stop the pyinofity thread
-'''
+#documentation['watch']['start'] = '''
+#    Start a pyinofity thread which is watching on the source folder
+#'''
+#
+#documentation['watch']['stop'] = '''
+#    Stop the pyinofity thread
+#'''
 
 def main():
     print(documentation['help'])
