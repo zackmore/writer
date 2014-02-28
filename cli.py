@@ -1,13 +1,26 @@
 # -*- coding: utf-8 -*-
 
 documentation = {}
+
+documentation['help'] = '''Writer
+    writer init
+    writer watch
+    writer watch --stop
+    writer help
+'''  
+
 documentation['init'] = '''
-    Create Needed folders
+    -   Read settings from config.py
+    -   Create the 2 folders if needed
+    -   Check if there is md files already existed in source folder
+    -   Generate the html files (will remove all the existed html files first)
+
 
     # Project folder:
-        cli.py
-        config.py
-        Writer.py
+        cli.py      (command line)
+        config.py   (including options)
+        Tools.py    (cli.py invoke this file)
+        Writer.py   (.md to .html, and output page/index.html)
         template/
             Index.html
             Page.html
@@ -19,7 +32,6 @@ documentation['init'] = '''
             
 
     # Source folder
-        data.pickle # {inode: hash(mdcontent)}
         article1.md
         article2.md
         ...
@@ -27,8 +39,8 @@ documentation['init'] = '''
     # Deployed folder:
         Index.html
         page/
-            page1.html
-            page2.html
+            1.html
+            2.html
             ...
         article1.html
         article2.html
@@ -38,6 +50,18 @@ documentation['init'] = '''
         js/
             main.js
 '''
-documentation['watch'] = '''
-    Start a pyinofity thread which is watching the source folder
+
+documentation['watch']['start'] = '''
+    Start a pyinofity thread which is watching on the source folder
 '''
+
+documentation['watch']['stop'] = '''
+    Stop the pyinofity thread
+'''
+
+def main():
+    print(documentation['help'])
+
+
+if __name__ == '__main__':
+    main()
