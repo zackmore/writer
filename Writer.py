@@ -16,10 +16,47 @@ from config import *
 class Writer(object):
     def __init__(self):
         self.env = Environment(loader=FileSystemLoader(Template_path))
-        self.page_quantity = Page_Quantity
+        self.page_quantity = Page_quantity
 
     def _list_page_output(self):
-        pass
+        htmls = [html for html in os.listdir(Deployed_folder)\
+                        if html.split('.')[-1] in HTML_extensions]
+        date_htmls = {}
+        for html in htmls:
+            date = time.strptime('-'.join(html.split('-')[:3]), '%Y-%m-%d')
+            date_htmls[date] = html
+
+        dates = date_htmls.keys()
+        dates.sort(reverse=True)
+        if Page_sort == 'asc':
+            dates = date_htmls.keys().sort()
+
+        pages = len(dates) / self.page_quantity
+        if len(dates) % self.page_quantity > 0:
+            pages =+ 1
+        if pages > 1:
+            if not os.path.exists(os.path.join(Deployed_folder, 'page')):
+                try:
+                    os.mkdir(os.path.join(Deployed_folder, 'page'))
+                except IOError as e:
+                    print('Create page folder failed. Error: %s' % e)
+
+        template = self.env.get_template('Page.html')
+        for page in xrange(pages):
+            page_url = os.path.join(Deployed_folder, 'page', str(page+1)+'.html')
+            f = open(page_url, 'w')
+            items_list = []
+            for d in dates[page:page+self.page_quantity]: 
+                tmp_item = {}
+                tmp_item['date'] = time.strftime('%Y-%m-%d', d)
+                tmp_item['url'] = date_htmls[d]
+                tmp_item['title'] = urllib.unquote_plus(date_htmls[d][11:])
+                tmp_item['title'] = '.'.join(tmp_item['title'].split('.')[:-1])
+                items_list.append(tmp_item)
+            f.write(template.render(item_list=items_list))
+            f.close()
+
+
 
     def generate_index(self):
         '''
@@ -98,6 +135,7 @@ class Writer(object):
 
 if __name__ == '__main__':
     writer = Writer()
-    writer.generate_article('1.md')
+    writer._list_page_output()
+    #writer.generate_article('1.md')
     #pdb.set_trace()
     #writer._parse_md('1.md')

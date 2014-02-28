@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <title>{{ page_num }}</title>
+</head>
+<body>
+    <ul>
+        {% for item in item_list %}
+        <li>
+            <a href="/{{ item['url'] }}">{{ item['date'] }}&nbsp;&nbsp;&nbsp;&nbsp;{{ item['title'] }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

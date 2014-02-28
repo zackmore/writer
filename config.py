@@ -13,7 +13,9 @@ Template_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
                 'template'))
 
 # The items quantity of one page
-Page_Quantity = 10
+Page_sort = 'desc' # 'desc' or 'asc'
+Page_quantity = 1
+#Page_quantity = 20
 
 HTML_extensions = ['html', 'htm', 'shtml', 'cshtml', 'xhtml']
 Markdown_extensions = ['markdown', 'mdown', 'mkdn', 'md', 'mkd',
