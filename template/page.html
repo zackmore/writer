@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block section %}
+    {% block content %}
+    <p id="page-info"><span>Page {{ page_number }}</span></p>
+    <ul id="list">
+        {% for article in articles %}
+        <li>
+            <em>{{ article['date']['year'] }}<br>{{ article['date']['monthday'] }}</em>
+            <a href="/{{ article['url'] }}">
+                <h2>{{ article['title'] }}</h2>
+                <p>{{ article['description'] }}</p>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <div id="pagination" class="clearfix">
+        <a href="/page/{{ page_number+1 }}.html">Next&nbsp;&gt;</a>
+        <a href="/page/{{ page_number-1 }}.html">&lt;&nbsp;Prev</a>
+    </div>
+    {% endblock %}
+{% endblock %}

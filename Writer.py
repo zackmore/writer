@@ -67,7 +67,7 @@ class Writer(object):
         if not os.path.exists(os.path.join(Deployed_folder, 'page')):
             os.mkdir(os.path.join(Deployed_folder, 'page'))
 
-        template = self.env.get_template('Page.html')
+        template = self.env.get_template('page.html')
         for page in xrange(pages):
             page_url = os.path.join(Deployed_folder, 'page', str(page+1)+'.html')
             try:
@@ -79,7 +79,7 @@ class Writer(object):
                     tmp_item['title'] = d[1]
                     tmp_item['url'] = tmp_item['date'] + '-' + tmp_item['title']
                     items_list.append(tmp_item)
-                f.write(template.render(item_list=items_list))
+                f.write(template.render(item_list=items_list, page_number=page+1))
                 f.close()
             except IOError as e:
                 print('Create page.html file failed. Error: %s' % e)
@@ -139,7 +139,7 @@ class Writer(object):
 
     def generate_article(self, filepath):
         html = self._parse_md(filepath)
-        template = self.env.get_template('Article.html')
+        template = self.env.get_template('article.html')
         try:
             f = open(os.path.join(Deployed_folder, html['url']+'.html'), 'w')
             f.write(template.render(article=html))
@@ -150,8 +150,8 @@ class Writer(object):
 
 if __name__ == '__main__':
     writer = Writer()
+    writer.generate_article('/tmp/Sources/1.md')
     writer.generate_page(writer._sort_articles())
-    #writer.generate_article('/tmp/Sources/1.md')
     #writer.generate_article('/tmp/Sources/2.md')
     #writer.generate_article('/tmp/Sources/3.md')
     #writer.generate_article('/tmp/Sources/4.md')

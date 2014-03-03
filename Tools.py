@@ -76,13 +76,13 @@ class Tool(object):
         except OSError as e:
             print('template/css copied failed. Error: %s' % e)
 
-        try:
-            shutil.copytree(os.path.join(Template_path, 'js'),
-                            os.path.join(Deployed_folder, 'js'))
-        except shutil.Error as e:
-            print('template/js copied failed. Error: %s' % e)
-        except OSError as e:
-            print('template/js copied failed. Error: %s' % e)
+        #try:
+        #    shutil.copytree(os.path.join(Template_path, 'js'),
+        #                    os.path.join(Deployed_folder, 'js'))
+        #except shutil.Error as e:
+        #    print('template/js copied failed. Error: %s' % e)
+        #except OSError as e:
+        #    print('template/js copied failed. Error: %s' % e)
 
     def init_folders(self):
         '''

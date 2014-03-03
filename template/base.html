@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>{{ page_title }}</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="/css/normalize.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+        <div id="wrap">
+            {% block header %}
+            <header><a id="logo" href="/">Zlog</a></header>
+            {% endblock %}
+            {% block section %}
+                {% block content %}
+                {% endblock %}
+            {% endblock %}
+            <footer>
+                <div class="inner clearfix">
+                    <a href="/">blog.zengq.in</a>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>
