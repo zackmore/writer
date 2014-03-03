@@ -2,13 +2,13 @@
 {% block header %}
 {% endblock %}
 {% block section %}
+<section id="article">
     {% block content %}
-    <section id="article">
         <hgroup>
             <h1 class="title">{{ article['title'] }}</h1>
             <h2 class="date">{{ article['date'] }}</h2>
         </hgroup>
         {{ article['content'] }}
-    </section>
     {% endblock %}
+</section>
 {% endblock %}

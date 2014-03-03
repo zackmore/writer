@@ -14,6 +14,7 @@ Template_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
 
 # The items quantity of one page
 Page_sort = 'desc' # 'desc' or 'asc'
+Index_quantity = 2
 Page_quantity = 2
 #Page_quantity = 20
 

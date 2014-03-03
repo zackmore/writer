@@ -1,29 +1,9 @@
 # writer
 
-An html generator for converting *.md files to *.html files.
+Static blog generator.
 
-## Markdown file example
+## todo
 
-```
-Title: Nice to meet you: guyes
-Date: 2011-11-11
-Description: What should I say
-
-----------------
-
-content goes here
-
-a list
-
--  1
--  2
--  3
-
->   a blockquote
-
-```python
-def AClassCodeOfPython(object):
-    print('haaha')
-```
-
-```
+-   use Wirter._parse_md() for outputing index and pages.
+-   category/tags support
+-   additional increment build

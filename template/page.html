@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block section %}
+<section>
     {% block content %}
     <p id="page-info"><span>Page {{ page_number }}</span></p>
     <ul id="list">
@@ -18,4 +19,5 @@
         <a href="/page/{{ page_number-1 }}.html">&lt;&nbsp;Prev</a>
     </div>
     {% endblock %}
+</section>
 {% endblock %}

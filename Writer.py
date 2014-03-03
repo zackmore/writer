@@ -24,6 +24,9 @@ class Writer(object):
         '''
         htmls = [html for html in os.listdir(Deployed_folder)\
                         if html.split('.')[-1] in HTML_extensions]
+        if 'index.html' in htmls:
+            htmls.remove('index.html')
+
         date_htmls = []
         for html in htmls:
             file_date = '-'.join(html.split('-')[:3])
@@ -44,11 +47,27 @@ class Writer(object):
                 return date_htmls[:quantity]
 
 
-    def generate_index(self):
+    def generate_index(self, articles):
         '''
         Index the newest 10 articles
         '''
-        pass
+        template = self.env.get_template('index.html')
+        items_list = []
+        try:
+            f = open(os.path.join(Deployed_folder, 'index.html'), 'w')
+            for a in articles[:Index_quantity]:
+                tmp_item = {}
+                date_tmp = time.strptime(a[0], '%Y-%m-%d')
+                tmp_item['date'] = {}
+                tmp_item['date']['year'] = time.strftime('%Y', date_tmp)
+                tmp_item['date']['monthday'] = time.strftime('%m.%d', date_tmp)
+                tmp_item['title'] = a[1]
+                tmp_item['url'] = a[0] + '-' + a[1]
+                items_list.append(tmp_item)
+            f.write(template.render(articles=items_list))
+            f.close()
+        except IOError as e:
+            print('Create index.html file failed. Error: %s' % e)
 
     def generate_page(self, articles):
         '''
@@ -75,11 +94,14 @@ class Writer(object):
                 items_list = []
                 for d in articles[page*self.page_quantity:(page+1)*self.page_quantity]: 
                     tmp_item = {}
-                    tmp_item['date'] = d[0]
+                    date_tmp = time.strptime(d[0], '%Y-%m-%d')
+                    tmp_item['date'] = {}
+                    tmp_item['date']['year'] = time.strftime('%Y', date_tmp)
+                    tmp_item['date']['monthday'] = time.strftime('%m.%d', date_tmp)
                     tmp_item['title'] = d[1]
-                    tmp_item['url'] = tmp_item['date'] + '-' + tmp_item['title']
+                    tmp_item['url'] = d[0] + '-' + d[1]
                     items_list.append(tmp_item)
-                f.write(template.render(item_list=items_list, page_number=page+1))
+                f.write(template.render(articles=items_list, page_number=page+1))
                 f.close()
             except IOError as e:
                 print('Create page.html file failed. Error: %s' % e)
@@ -151,7 +173,9 @@ class Writer(object):
 if __name__ == '__main__':
     writer = Writer()
     writer.generate_article('/tmp/Sources/1.md')
-    writer.generate_page(writer._sort_articles())
+    writer.generate_index(writer._sort_articles());
+    writer.generate_page(writer._sort_articles());
+    #writer.generate_page(writer._sort_articles())
     #writer.generate_article('/tmp/Sources/2.md')
     #writer.generate_article('/tmp/Sources/3.md')
     #writer.generate_article('/tmp/Sources/4.md')
