@@ -18,44 +18,30 @@ class Writer(object):
         self.env = Environment(loader=FileSystemLoader(Template_path))
         self.page_quantity = Page_quantity
 
-    def _list_page_output(self):
+    def _sort_articles(self, quantity='all'):
+        '''
+        Sort the html files in /Deploy
+        '''
         htmls = [html for html in os.listdir(Deployed_folder)\
                         if html.split('.')[-1] in HTML_extensions]
-        date_htmls = {}
+        date_htmls = []
         for html in htmls:
-            date = time.strptime('-'.join(html.split('-')[:3]), '%Y-%m-%d')
-            date_htmls[date] = html
+            file_date = '-'.join(html.split('-')[:3])
+            file_name = '-'.join(html.split('-')[3:])
+            date_htmls.append(tuple([file_date, file_name]))
 
-        dates = date_htmls.keys()
-        dates.sort(reverse=True)
+
+        date_htmls.sort(reverse=True)
         if Page_sort == 'asc':
-            dates = date_htmls.keys().sort()
+            date_htmls.sort()
 
-        pages = len(dates) / self.page_quantity
-        if len(dates) % self.page_quantity > 0:
-            pages =+ 1
-        if pages > 1:
-            if not os.path.exists(os.path.join(Deployed_folder, 'page')):
-                try:
-                    os.mkdir(os.path.join(Deployed_folder, 'page'))
-                except IOError as e:
-                    print('Create page folder failed. Error: %s' % e)
-
-        template = self.env.get_template('Page.html')
-        for page in xrange(pages):
-            page_url = os.path.join(Deployed_folder, 'page', str(page+1)+'.html')
-            f = open(page_url, 'w')
-            items_list = []
-            for d in dates[page:page+self.page_quantity]: 
-                tmp_item = {}
-                tmp_item['date'] = time.strftime('%Y-%m-%d', d)
-                tmp_item['url'] = date_htmls[d]
-                tmp_item['title'] = urllib.unquote_plus(date_htmls[d][11:])
-                tmp_item['title'] = '.'.join(tmp_item['title'].split('.')[:-1])
-                items_list.append(tmp_item)
-            f.write(template.render(item_list=items_list))
-            f.close()
-
+        if quantity == 'all':
+            return date_htmls
+        elif isinstance(quantity, int):
+            if quantity >= len(date_htmls):
+                return date_htmls
+            else:
+                return date_htmls[:quantity]
 
 
     def generate_index(self):
@@ -64,10 +50,39 @@ class Writer(object):
         '''
         pass
 
-    def generate_page(self):
+    def generate_page(self, articles):
         '''
+        Write to /Deploy/page/ path
         '''
-        pass
+        pages = len(articles) / self.page_quantity
+        if len(articles) % self.page_quantity > 0:
+            pages =+ 1
+        if pages > 1:
+            if not os.path.exists(os.path.join(Deployed_folder, 'page')):
+                try:
+                    os.mkdir(os.path.join(Deployed_folder, 'page'))
+                except IOError as e:
+                    print('Create page folder failed. Error: %s' % e)
+
+        if not os.path.exists(os.path.join(Deployed_folder, 'page')):
+            os.mkdir(os.path.join(Deployed_folder, 'page'))
+
+        template = self.env.get_template('Page.html')
+        for page in xrange(pages):
+            page_url = os.path.join(Deployed_folder, 'page', str(page+1)+'.html')
+            try:
+                f = open(page_url, 'w')
+                items_list = []
+                for d in articles[page*self.page_quantity:(page+1)*self.page_quantity]: 
+                    tmp_item = {}
+                    tmp_item['date'] = d[0]
+                    tmp_item['title'] = d[1]
+                    tmp_item['url'] = tmp_item['date'] + '-' + tmp_item['title']
+                    items_list.append(tmp_item)
+                f.write(template.render(item_list=items_list))
+                f.close()
+            except IOError as e:
+                print('Create page.html file failed. Error: %s' % e)
 
     def _parse_md(self, filepath):
         '''
@@ -135,7 +150,9 @@ class Writer(object):
 
 if __name__ == '__main__':
     writer = Writer()
-    writer._list_page_output()
-    #writer.generate_article('1.md')
-    #pdb.set_trace()
-    #writer._parse_md('1.md')
+    writer.generate_page(writer._sort_articles())
+    #writer.generate_article('/tmp/Sources/1.md')
+    #writer.generate_article('/tmp/Sources/2.md')
+    #writer.generate_article('/tmp/Sources/3.md')
+    #writer.generate_article('/tmp/Sources/4.md')
+    #writer._sort_articles()
