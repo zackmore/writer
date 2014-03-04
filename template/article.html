@@ -5,10 +5,10 @@
 <section id="article">
     {% block content %}
         <hgroup>
-            <h1 class="title">{{ article['title'] }}</h1>
-            <h2 class="date">{{ article['date'] }}</h2>
+            <h1 class="title">{{ article.title }}</h1>
+            <h2 class="date">{{ article.date|showtime }}</h2>
         </hgroup>
-        {{ article['content'] }}
+        {{ article.content }}
     {% endblock %}
 </section>
 {% endblock %}

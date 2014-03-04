@@ -6,18 +6,26 @@
     <ul id="list">
         {% for article in articles %}
         <li>
-            <em>{{ article['date']['year'] }}<br>{{ article['date']['monthday'] }}</em>
-            <a href="/{{ article['url'] }}">
-                <h2>{{ article['title'] }}</h2>
-                <p>{{ article['description'] }}</p>
+            <em>{{ article.date.year }}<br>{{ article.date.month }}.{{ article.date.day }}</em>
+            <a href="/{{ article.url }}">
+                <h2>{{ article.title }}</h2>
+                {% if article.description %}
+                <p>{{ article.description }}</p>
+                {% endif %}
             </a>
         </li>
         {% endfor %}
     </ul>
+    {% if pages_flag %}
     <div id="pagination" class="clearfix">
-        <a href="/page/{{ page_number+1 }}.html">Next&nbsp;&gt;</a>
-        <a href="/page/{{ page_number-1 }}.html">&lt;&nbsp;Prev</a>
+        {% if pagination.has_next %}
+        <a href="/page/{{ pagination.next_number }}.html">Next&nbsp;&gt;</a>
+        {% endif %}
+        {% if pagination.has_prev %}
+        <a href="/page/{{ pagination.prev_number }}.html">&lt;&nbsp;Prev</a>
+        {% endif %}
     </div>
+    {% endif %}
     {% endblock %}
 </section>
 {% endblock %}

@@ -14,117 +14,9 @@ from jinja2 import Environment, FileSystemLoader
 from Tools import *
 from config import *
 
-class Writer(object):
-    def __init__(self):
-        self.env = Environment(loader=FileSystemLoader(Template_path))
-        self.page_quantity = Page_quantity
 
-    def _sort_articles(self, quantity='all'):
-        '''
-        Sort the html files in /Deploy
-        '''
-        htmls = [html for html in os.listdir(Deployed_folder)\
-                        if html.split('.')[-1] in HTML_extensions]
-        if 'index.html' in htmls:
-            htmls.remove('index.html')
-
-        date_htmls = []
-        for html in htmls:
-            file_date = '-'.join(html.split('-')[:3])
-            file_name = '-'.join(html.split('-')[3:])
-            date_htmls.append(tuple([file_date, file_name]))
-
-
-        date_htmls.sort(reverse=True)
-        if Page_sort == 'asc':
-            date_htmls.sort()
-
-        if quantity == 'all':
-            return date_htmls
-        elif isinstance(quantity, int):
-            if quantity >= len(date_htmls):
-                return date_htmls
-            else:
-                return date_htmls[:quantity]
-
-
-    def generate_index(self, articles):
-        '''
-        Index the newest 10 articles
-        '''
-        template = self.env.get_template('index.html')
-        items_list = []
-        try:
-            f = open(os.path.join(Deployed_folder, 'index.html'), 'w')
-            for a in articles[:Index_quantity]:
-                tmp_item = {}
-                date_tmp = time.strptime(a[0], '%Y-%m-%d')
-                tmp_item['date'] = {}
-                tmp_item['date']['year'] = time.strftime('%Y', date_tmp)
-                tmp_item['date']['monthday'] = time.strftime('%m.%d', date_tmp)
-                tmp_item['title'] = a[1]
-                tmp_item['url'] = a[0] + '-' + a[1]
-                items_list.append(tmp_item)
-            f.write(template.render(articles=items_list))
-            f.close()
-        except IOError as e:
-            print('Create index.html file failed. Error: %s' % e)
-
-    def generate_page(self, articles):
-        '''
-        Write to /Deploy/page/ path
-        '''
-        pages = len(articles) / self.page_quantity
-        if len(articles) % self.page_quantity > 0:
-            pages =+ 1
-        if pages > 1:
-            if not os.path.exists(os.path.join(Deployed_folder, 'page')):
-                try:
-                    os.mkdir(os.path.join(Deployed_folder, 'page'))
-                except IOError as e:
-                    print('Create page folder failed. Error: %s' % e)
-
-        if not os.path.exists(os.path.join(Deployed_folder, 'page')):
-            os.mkdir(os.path.join(Deployed_folder, 'page'))
-
-        template = self.env.get_template('page.html')
-        for page in xrange(pages):
-            page_url = os.path.join(Deployed_folder, 'page', str(page+1)+'.html')
-            try:
-                f = open(page_url, 'w')
-                items_list = []
-                for d in articles[page*self.page_quantity:(page+1)*self.page_quantity]: 
-                    tmp_item = {}
-                    date_tmp = time.strptime(d[0], '%Y-%m-%d')
-                    tmp_item['date'] = {}
-                    tmp_item['date']['year'] = time.strftime('%Y', date_tmp)
-                    tmp_item['date']['monthday'] = time.strftime('%m.%d', date_tmp)
-                    tmp_item['title'] = d[1]
-                    tmp_item['url'] = d[0] + '-' + d[1]
-                    items_list.append(tmp_item)
-                f.write(template.render(articles=items_list, page_number=page+1))
-                f.close()
-            except IOError as e:
-                print('Create page.html file failed. Error: %s' % e)
-
-    def _parse_md(self, filepath, withcontent=True):
-        '''
-        return
-        {
-            'url':,
-            'title':,
-            'date':,
-            'description':,
-            'content':,
-        }
-        '''
-        file_stat = {}
-        file_stat['file'] = '.'.join(os.path.basename(filepath).split('.')[:-1])
-        file_stat['mtime'] = time.strftime('%Y-%m-%d',
-                                        time.gmtime(os.stat(filepath).st_mtime))
-
-        result = {}
-
+class Post(object):
+    def __init__(self, filepath):
         f = open(filepath)
         header = ''
         body = ''
@@ -139,50 +31,194 @@ class Writer(object):
                 body += line
         f.close()
 
-        headers = [Utils._to_unicode(info) for info in header.split('\n') if info]
-        for info in headers:
-            if info.startswith('Title:'):
-                result['title'] = info.split(':', 1)[1].strip()
-            if info.startswith('Date:'):
-                result['date'] = info.split(':', 1)[1].strip()
-            if info.startswith('Description:'):
-                result['description'] = info.split(':', 1)[1].strip()
+        self.filepath = filepath
+        self.metalines = [Utils.to_unicode(line)\
+                        for line in header.split('\n') if line]
+        self.bodycontent = Utils.to_unicode(body)
 
-        if withcontent:
-            result['content'] = Utils._to_unicode(markdown2.markdown(body,
-                                    extras=['code-friendly',
-                                            'fenced-code-blocks']))
+    @property
+    def mtime(self):
+        return Utils.to_time(Utils.parse_time(os.stat(self.filepath).st_mtime))
 
-        if 'title' not in result:
-            result['title'] = Utils._to_unicode(file_stat['file'])
-        if 'date' not in result:
-            result['date'] = Utils._to_unicode(file_stat['mtime'])
+    @property
+    def filename(self):
+        return os.path.basename(self.filepath).split('.')[0]
 
-        result['htmlfile'] = '-'.join(
-                                [
-                                    Utils._utf8(result['date']),
-                                    re.sub(r'\s+', '-', Utils._utf8(result['title']))
-                                ]
-                            ) + '.html'
-        result['url'] = urllib.quote_plus(result['htmlfile'])
+    @property
+    def url(self):
+        return urllib.quote_plus(Utils.to_utf8(self.htmlfile))
 
-        return result
+    @property
+    def title(self):
+        for line in self.metalines:
+            if line.startswith('Title:'):
+                return line.split(':', 1)[1].strip()
+        return self.filename
 
-    def generate_article(self, filepath):
-        html = self._parse_md(filepath)
-        template = self.env.get_template('article.html')
+    @property
+    def date(self):
+        for line in self.metalines:
+            if line.startswith('Date:'):
+                return Utils.parse_time(line.split(':', 1)[1].strip())
+        return self.mtime
+
+    @property
+    def htmlfile(self):
+        return '-'.join([Utils.to_time(self.date), self.title]) + '.html'
+
+    @property
+    def description(self):
+        for line in self.metalines:
+            if line.startswith('Description:'):
+                return line.split(':', 1)[1].strip()
+
+    @property
+    def content(self):
+        return Utils.to_unicode(markdown2.markdown(self.bodycontent,
+                                extras=['code-friendly',
+                                        'fenced-code-blocks']))
+
+    def to_html(self):
+        env = Environment(loader=FileSystemLoader(Template_path))
+        env.filters['showtime'] = Utils.to_time
+        template = env.get_template('article.html')
         try:
-            #f = open(os.path.join(Deployed_folder, html['url']), 'w', 'utf-8')
-            f = codecs.open(os.path.join(Deployed_folder, html['htmlfile']), 'w', 'utf-8')
-            f.write(template.render(article=html))
+            f = codecs.open(
+                    os.path.join(Deployed_folder, self.htmlfile),
+                    'w',
+                    'utf-8')
+            f.write(template.render(article=self))
             f.close()
         except IOError as e:
             print('Build article failed. Error: %s' % e)
 
 
+class Pagination(object):
+    def __init__(self, page_number, pages, per_page):
+        self.page_number = page_number + 1
+        self.pages = pages
+        self.per_page = per_page
+
+    @property
+    def start_point(self):
+        return (self.page_number - 1) * self.per_page
+    
+    @property
+    def end_point(self):
+        return (self.page_number - 1) * self.per_page + self.per_page
+
+    @property
+    def has_prev(self):
+        return self.page_number > 1
+
+    @property
+    def prev_number(self):
+        return self.page_number - 1
+
+    @property
+    def has_next(self):
+        return self.page_number < self.pages
+
+    @property
+    def next_number(self):
+        return self.page_number + 1
+
+
+class Page(object):
+    def __init__(self, postlist):
+        self.postlist = postlist
+
+    def _sort_postlist(self, reverse=True):
+        self.sorted_postlist = []
+
+        tmp_list = []
+        for post in self.postlist:
+            tmp_list.append(tuple([Utils.parse_time(post.date), post]))
+
+        if reverse:
+            tmp_list.sort(reverse=True)
+        else:
+            tmp_list.sort()
+
+        for t in tmp_list:
+            self.sorted_postlist.append(t[1])
+
+        return self.sorted_postlist
+
+    def to_pagehtml(self):
+        self._sort_postlist()
+
+        total = len(self.sorted_postlist)
+        per_page = Page_quantity
+
+        if total % per_page == 0:
+            pages = total / per_page
+        else:
+            pages = total /per_page + 1
+
+        pages_flag = False
+        if pages > 1:
+            pages_flag = True
+
+        for p in xrange(pages):
+            pagination = Pagination(p, pages, per_page)
+
+            env = Environment(loader=FileSystemLoader(Template_path))
+            template = env.get_template('page.html')
+            try:
+                f = codecs.open(
+                        os.path.join(Deployed_folder,
+                                    'page',
+                                    str(pagination.page_number)+'.html'),
+                        'w',
+                        'utf-8')
+                f.write(template.render(
+                        articles=self.sorted_postlist\
+                                [pagination.start_point:pagination.end_point],
+                        pages_flag=pages_flag,
+                        pagination=pagination))
+                f.close()
+            except IOError as e:
+                print('Build page failed. Error: %s' % e)
+
+    def to_indexhtml(self):
+        self._sort_postlist()
+
+        pages = False
+        if len(self.sorted_postlist) > Index_quantity:
+            pages = True
+
+        env = Environment(loader=FileSystemLoader(Template_path))
+        template = env.get_template('index.html')
+        try:
+            f = codecs.open(
+                    os.path.join(Deployed_folder, 'index.html'),
+                    'w',
+                    'utf-8')
+            f.write(template.render(
+                        articles=self.sorted_postlist[:Index_quantity],
+                        pages=pages))
+            f.close()
+        except IOError as e:
+            print('Build index failed. Error: %s' % e)
+        
+
 if __name__ == '__main__':
-    writer = Writer()
-    writer.generate_article(u'/tmp/Sources/中文2.md')
+    post1 = Post(u'/tmp/Sources/中文.md')
+    post2 = Post(u'/tmp/Sources/1.md')
+    post3 = Post(u'/tmp/Sources/2.md')
+    post4 = Post(u'/tmp/Sources/3.md')
+
+    page = Page([post1, post2, post3, post4])
+    post1.to_html()
+    post2.to_html()
+    post3.to_html()
+    post4.to_html()
+    #page.to_indexhtml()
+    page.to_pagehtml()
+    #post.to_html()
+    #writer = Writer()
+    #writer.generate_article(u'/tmp/Sources/中文2.md')
     #writer.generate_index(writer._sort_articles());
     #writer.generate_page(writer._sort_articles());
     #writer.generate_article('/tmp/Sources/2.md')

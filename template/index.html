@@ -5,17 +5,21 @@
         <ul id="list">
             {% for article in articles %}
             <li>
-                <em>{{ article['date']['year'] }}<br>{{ article['date']['monthday'] }}</em>
-                <a href="/{{ article['url'] }}">
-                    <h2>{{ article['title'] }}</h2>
-                    <p>{{ article['description'] }}</p>
+            <em>{{ article.date.year }}<br>{{ article.date.month }}.{{ article.date.day }}</em>
+                <a href="/{{ article.url }}">
+                    <h2>{{ article.title }}</h2>
+                    {% if article.description %}
+                    <p>{{ article.description }}</p>
+                    {% endif %}
                 </a>
             </li>
             {% endfor %}
         </ul>
+        {% if pages %}
         <div id="pagination" class="clearfix">
             <a href="/page/1.html">All&nbsp;&gt;</a>
         </div>
+        {% endif %}
     {% endblock %}
 </section>
 {% endblock %}

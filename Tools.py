@@ -3,6 +3,7 @@
 import sys
 import os
 import os.path
+from datetime import datetime
 import shutil
 
 from config import *
@@ -95,7 +96,7 @@ class Tool(object):
 
 class Utils(object):
     @staticmethod
-    def _to_unicode(value):
+    def to_unicode(value):
         if isinstance(value, unicode):
             return value
         if isinstance(value, basestring):
@@ -107,13 +108,31 @@ class Utils(object):
         return value
 
     @staticmethod
-    def _utf8(value):
+    def to_utf8(value):
         if isinstance(value, (bytes, type(None), str)):
             return value
         if isinstance(value, int):
             return str(value)
         assert isinstance(value, unicode)
         return value.encode('utf-8')
+
+    @staticmethod
+    def to_time(timetuple):
+        return datetime.strftime(timetuple, '%Y-%m-%d')
+
+    @staticmethod
+    def parse_time(value):
+        if not value:
+            return None
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, float):
+            return datetime.fromtimestamp(value)
+        try:
+            return datetime.strptime(value, '%Y-%m-%d')
+        except ValueError as e:
+            print('Unrecorgnized time format. Error: %s' % e)
+
 
 
 if __name__ == '__main__':
