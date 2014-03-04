@@ -108,7 +108,7 @@ class Utils(object):
 
     @staticmethod
     def _utf8(value):
-        if isinstace(value, (bytes, type(None), str)):
+        if isinstance(value, (bytes, type(None), str)):
             return value
         if isinstance(value, int):
             return str(value)

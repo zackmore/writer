@@ -6,6 +6,7 @@ import os.path
 import time
 import re
 import urllib
+import codecs
 
 import markdown2
 from jinja2 import Environment, FileSystemLoader
@@ -106,7 +107,7 @@ class Writer(object):
             except IOError as e:
                 print('Create page.html file failed. Error: %s' % e)
 
-    def _parse_md(self, filepath):
+    def _parse_md(self, filepath, withcontent=True):
         '''
         return
         {
@@ -133,12 +134,12 @@ class Writer(object):
                 (line.startswith('---') or line.startswith('===')):
                 header_flag = False
             elif header_flag:
-                header += Utils._to_unicode(line)
+                header += line
             else:
-                body += Utils._to_unicode(line)
+                body += line
         f.close()
 
-        headers = header.split('\n')
+        headers = [Utils._to_unicode(info) for info in header.split('\n') if info]
         for info in headers:
             if info.startswith('Title:'):
                 result['title'] = info.split(':', 1)[1].strip()
@@ -147,15 +148,23 @@ class Writer(object):
             if info.startswith('Description:'):
                 result['description'] = info.split(':', 1)[1].strip()
 
-        result['content'] = markdown2.markdown(body, extras=['code-friendly',
-                                                        'fenced-code-blocks'])
+        if withcontent:
+            result['content'] = Utils._to_unicode(markdown2.markdown(body,
+                                    extras=['code-friendly',
+                                            'fenced-code-blocks']))
 
         if 'title' not in result:
-            result['title'] = file_stat['file']
+            result['title'] = Utils._to_unicode(file_stat['file'])
         if 'date' not in result:
-            result['date'] = file_stat['mtime']
+            result['date'] = Utils._to_unicode(file_stat['mtime'])
 
-        result['url'] = urllib.quote_plus('-'.join([result['date'], re.sub(r'\s+', '-', result['title'])]))
+        result['htmlfile'] = '-'.join(
+                                [
+                                    Utils._utf8(result['date']),
+                                    re.sub(r'\s+', '-', Utils._utf8(result['title']))
+                                ]
+                            ) + '.html'
+        result['url'] = urllib.quote_plus(result['htmlfile'])
 
         return result
 
@@ -163,7 +172,8 @@ class Writer(object):
         html = self._parse_md(filepath)
         template = self.env.get_template('article.html')
         try:
-            f = open(os.path.join(Deployed_folder, html['url']+'.html'), 'w')
+            #f = open(os.path.join(Deployed_folder, html['url']), 'w', 'utf-8')
+            f = codecs.open(os.path.join(Deployed_folder, html['htmlfile']), 'w', 'utf-8')
             f.write(template.render(article=html))
             f.close()
         except IOError as e:
@@ -172,10 +182,9 @@ class Writer(object):
 
 if __name__ == '__main__':
     writer = Writer()
-    writer.generate_article('/tmp/Sources/1.md')
-    writer.generate_index(writer._sort_articles());
-    writer.generate_page(writer._sort_articles());
-    #writer.generate_page(writer._sort_articles())
+    writer.generate_article(u'/tmp/Sources/中文2.md')
+    #writer.generate_index(writer._sort_articles());
+    #writer.generate_page(writer._sort_articles());
     #writer.generate_article('/tmp/Sources/2.md')
     #writer.generate_article('/tmp/Sources/3.md')
     #writer.generate_article('/tmp/Sources/4.md')
