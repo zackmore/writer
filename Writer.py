@@ -3,7 +3,6 @@ import pdb
 
 import os
 import os.path
-import time
 import re
 import urllib
 import codecs
