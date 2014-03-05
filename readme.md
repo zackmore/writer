@@ -64,6 +64,7 @@ it will generates some paths just like below:
 ## Todo
 
 -   images Dropbox
+-   comment Disqus
 -   Remote Sync local Deploy and server Deploy
 -   category/tags support
 -   additional increment build (with SQLite)
