@@ -45,7 +45,7 @@ class Post(object):
 
     @property
     def url(self):
-        return urllib.quote_plus(Utils.to_utf8(self.htmlfile))
+        return urllib.quote(Utils.to_utf8(self.htmlfile))
 
     @property
     def title(self):
@@ -59,7 +59,7 @@ class Post(object):
         for line in self.metalines:
             if line.startswith('Date:'):
                 return Utils.parse_time(line.split(':', 1)[1].strip())
-        return self.mtime
+        return Utils.parse_time(self.mtime)
 
     @property
     def htmlfile(self):
@@ -165,6 +165,9 @@ class Page(object):
             env = Environment(loader=FileSystemLoader(Template_path))
             template = env.get_template('page.html')
             try:
+                if not os.path.isdir(os.path.join(Deployed_folder, 'page')):
+                    os.mkdir(os.path.join(Deployed_folder, 'page'))
+
                 f = codecs.open(
                         os.path.join(Deployed_folder,
                                     'page',
@@ -213,7 +216,7 @@ if __name__ == '__main__':
     post2.to_html()
     post3.to_html()
     post4.to_html()
-    #page.to_indexhtml()
+    page.to_indexhtml()
     page.to_pagehtml()
     #post.to_html()
     #writer = Writer()

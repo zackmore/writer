@@ -2,7 +2,7 @@
 {% block section %}
 <section>
     {% block content %}
-    <p id="page-info"><span>Page {{ page_number }}</span></p>
+    <p id="page-info"><span>Page {{ pagination.page_number }}</span></p>
     <ul id="list">
         {% for article in articles %}
         <li>
