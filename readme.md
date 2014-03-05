@@ -1,19 +1,24 @@
 # writer
 
-Yet another static blog generator. I just need a simple tool that can turn my markdown files to html files, and put them directly at the server root path. And also my requirements are very simple at first: no category/tags support, no additional increment build. These features will be implement later.
+Yet another static blog generator. I just need a simple tool that can turn my markdown files to html files, and put them directly at the server root path. And also my requirements are very simple at first: only pagination, no category/tags support, no additional increment build. But these features will be implement later.
 
 ## Usage
 
 -   `python cli.py init`
+
     Created needed paths
+
 -   `python cli.py build [-p] [filepath, filepath, ...]`
+
     Build Htmls
+
 -   `python cli.py help`
+
     Show help information
 
 ## Documentation
 
-Basically the `Writer.py` is for about pages, the `Tools.py` is for other addtional functions.
+Basically the `Writer.py` is for all things about pages, the `Tools.py` is for other addtional functions.
 
 When you `python cli.py init`, follows will happen:
 
