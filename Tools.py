@@ -9,11 +9,8 @@ import shutil
 from config import *
 
 class Tool(object):
-    def __init__(self):
-        #self.writer = Writer()
-        pass
-
-    def check_folders(self):
+    @staticmethod
+    def check_folders():
         '''
         Check source folder and deploy folder are existed, if not, create
         '''
@@ -36,22 +33,15 @@ class Tool(object):
             print('Make deploy folder encounter an already existed path')
             sys.exit(1)
 
-    def _init_source_folder(self):
-        '''
-        Generates HTML by all the Markdown files
-        '''
-        for path in os.listdir(Source_folder):
-            if os.path.isfile(path) and\
-            path.split('.')[-1] in Markdown_extensions:
-                #self.writer.generate_article(path)
-        #self.writer.generate_index()
-        #self.writer.generate_page()
-                pass
+    @staticmethod
+    def _init_source_folder():
+        pass
 
-    def _init_deploy_folder(self):
+    @staticmethod
+    def _init_deploy_folder():
         '''
         1.  Remove already existed HTML files
-        2.  Copy template/js, template/css
+        2.  Copy template/css
         '''
         # Remove already existed HTML file in Deploy folder
         for path in os.listdir(Deployed_folder):
@@ -68,7 +58,7 @@ class Tool(object):
                     except OSError as e:
                         print('Delete path in deploy folder failed. Error: %s' % e)
 
-        # Copy template/css, template/js to Deploy
+        # Copy template/css to Deploy
         try:
             shutil.copytree(os.path.join(Template_path, 'css'),
                             os.path.join(Deployed_folder, 'css'))
@@ -77,21 +67,9 @@ class Tool(object):
         except OSError as e:
             print('template/css copied failed. Error: %s' % e)
 
-        #try:
-        #    shutil.copytree(os.path.join(Template_path, 'js'),
-        #                    os.path.join(Deployed_folder, 'js'))
-        #except shutil.Error as e:
-        #    print('template/js copied failed. Error: %s' % e)
-        #except OSError as e:
-        #    print('template/js copied failed. Error: %s' % e)
-
-    def init_folders(self):
-        '''
-        It's important that must init deploy folder first, or all the HTML files
-        generates from source folder will be remove too.
-        '''
-        self._init_deploy_folder()
-        self._init_source_folder()
+    @staticmethod
+    def init_folders():
+        Tool._init_deploy_folder()
 
 
 class Utils(object):
@@ -133,9 +111,6 @@ class Utils(object):
         except ValueError as e:
             print('Unrecorgnized time format. Error: %s' % e)
 
-
-
-if __name__ == '__main__':
-    tool = Tool()
-    tool.check_folders()
-    tool.init_folders()
+    @staticmethod
+    def is_subpath(sub, master):
+        return os.path.abspath(sub).startswith(os.path.abspath(master))

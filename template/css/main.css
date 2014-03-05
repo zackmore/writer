@@ -141,6 +141,7 @@ header{
 section{
     max-width: 33em;
     margin: 0 auto;
+    min-height: 40em;
 }
 
 /* Page */

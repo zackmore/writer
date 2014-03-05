@@ -1,67 +1,60 @@
 # -*- coding: utf-8 -*-
 
-documentation = {}
+import sys
+from Tools import *
+from Writer import *
 
+documentation = {}
 documentation['help'] = '''Writer
-    writer init
-    writer watch
-    writer watch --stop
-    writer help
+    writer init                         Create the needed path
+    writer build [filepath, ...]        Build Html(s)
+    writer help                         Show this information
 '''  
 
 documentation['init'] = '''
-    -   Read settings from config.py
-    -   Create the 2 folders if needed
-    -   Check if there is md files already existed in source folder
-    -   Generate the html files (will remove all the existed html files first)
+Usage: python cli.py init
 
-
-    # Project folder:
-        cli.py      (command line)
-        config.py   (including options)
-        Tools.py    (cli.py invoke this file)
-        Writer.py   (.md to .html, and output page/index.html)
-        template/
-            Index.html
-            Page.html
-            Article.html
-            css/
-                style.css
-            js/
-                main.js
-            
-
-    # Source folder
-        article1.md
-        article2.md
-        ...
-
-    # Deployed folder:
-        Index.html
-        page/
-            1.html
-            2.html
-            ...
-        article1.html
-        article2.html
-        ...
-        css/
-            style.css
-        js/
-            main.js
+1.  Read settings from config.py
+2.  Create the 2 folders if needed
+3.  Copy template to Deployed_folder
 '''
 
-#documentation['watch']['start'] = '''
-#    Start a pyinofity thread which is watching on the source folder
-#'''
-#
-#documentation['watch']['stop'] = '''
-#    Stop the pyinofity thread
-#'''
+documentation['build'] = '''
+Usage: python cli.py build [filepath, ...]
+
+Change all Markdown files in Source folder to HTML files in Deploy folder. If filepath offered, will check if it is in Source folder, if not, will move the file in Source and then change.
+'''
 
 def main():
-    print(documentation['help'])
+    command = 'help'
+    if len(sys.argv[1]):
+        command = sys.argv[1]
+    if command == 'help':
+        if not sys.argv[2]:
+            print(documentation['help'])
+        elif sys.argv[2] == 'init':
+            print(documentation['init'])
+        elif sys.argv[2] == 'build':
+            print(documentation['build'])
+    if command == 'init':
+        Tool.check_folders()
+        Tool.init_folders()
+    if command == 'build':
+        if len(sys.argv[2:]):
+            for path in sys.argv[2:]:
+                if not Utils.is_subpath(path, Source_folder):
+                    shutil.move(path, Source_folder)
 
+        all_mds = [a for a in os.listdir(Source_folder)\
+                    if a.split('.')[-1] in Markdown_extensions]
+        postlist = []
+        for path in all_mds:
+            post = Post(os.path.join(Source_folder, path))
+            post.to_html()
+            postlist.append(post)
+        page = Page(postlist)
+        page.to_pagehtml()
+        page.to_indexhtml()
 
 if __name__ == '__main__':
     main()
