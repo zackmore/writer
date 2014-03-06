@@ -16,24 +16,20 @@ from config import *
 
 class Post(object):
     def __init__(self, filepath):
-        f = open(filepath)
-        header = ''
-        body = ''
-        header_flag = True
-        for line in f:
-            if header_flag and\
-                (line.startswith('---') or line.startswith('===')):
-                header_flag = False
-            elif header_flag:
-                header += line
+        if os.path.isdir(filepath):
+            mdfiles = [x for x in os.listdir(filepath)\
+                        if x.split('.')[-1] in Markdown_extensions]
+            try:
+                self._parse_md(os.path.join(filepath, mdfiles[0]))
+            except:
+                print('Parse md file failed.')
+                sys.exit()
             else:
-                body += line
-        f.close()
-
-        self.filepath = filepath
-        self.metalines = [Utils.to_unicode(line)\
-                        for line in header.split('\n') if line]
-        self.bodycontent = Utils.to_unicode(body)
+                #self._get_imgs()
+                self._process_imgs()
+                pass
+        elif os.path.isfile(filepath):
+            self._parse_md(filepath)
 
     @property
     def mtime(self):
@@ -76,6 +72,37 @@ class Post(object):
         return Utils.to_unicode(markdown2.markdown(self.bodycontent,
                                 extras=['code-friendly',
                                         'fenced-code-blocks']))
+
+    def _parse_md(self, filepath):
+        f = open(filepath)
+        header = ''
+        body = ''
+        header_flag = True
+        for line in f:
+            if header_flag and\
+                (line.startswith('---') or line.startswith('===')):
+                header_flag = False
+            elif header_flag:
+                header += line
+            else:
+                body += line
+        f.close()
+
+        self.filepath = filepath
+        self.metalines = [Utils.to_unicode(line)\
+                        for line in header.split('\n') if line]
+        self.bodycontent = Utils.to_unicode(body)
+
+    def _process_imgs(self):
+        #img_pattern = re.compile(r'!\[.*\]\((.*)\)')
+        #results = img_pattern.findall(self.bodycontent)
+        #self.imgs = [x for x in set(results)]
+
+        # lookbehind and lookahead re
+        result = re.sub(r'(?<=!\[\]\()(.*)(?=\))',
+                    lambda s: os.path.join(Deployed_folder, 'img', s.group(1)),
+                    self.bodycontent)
+        pdb.set_trace()
 
     def to_html(self):
         env = Environment(loader=FileSystemLoader(Template_path))
@@ -206,18 +233,22 @@ class Page(object):
         
 
 if __name__ == '__main__':
-    post1 = Post(u'/tmp/Sources/中文.md')
-    post2 = Post(u'/tmp/Sources/1.md')
-    post3 = Post(u'/tmp/Sources/2.md')
-    post4 = Post(u'/tmp/Sources/3.md')
+    #post = Post(r'/tmp/Sources/1.md')
+    post = Post(r'/tmp/Sources/test')
+    #post._get_imgs()
+    pdb.set_trace()
+    #post1 = Post(u'/tmp/Sources/中文.md')
+    #post2 = Post(u'/tmp/Sources/1.md')
+    #post3 = Post(u'/tmp/Sources/2.md')
+    #post4 = Post(u'/tmp/Sources/3.md')
 
-    page = Page([post1, post2, post3, post4])
-    post1.to_html()
-    post2.to_html()
-    post3.to_html()
-    post4.to_html()
-    page.to_indexhtml()
-    page.to_pagehtml()
+    #page = Page([post1, post2, post3, post4])
+    #post1.to_html()
+    #post2.to_html()
+    #post3.to_html()
+    #post4.to_html()
+    #page.to_indexhtml()
+    #page.to_pagehtml()
     #post.to_html()
     #writer = Writer()
     #writer.generate_article(u'/tmp/Sources/中文2.md')
