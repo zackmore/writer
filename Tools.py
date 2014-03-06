@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import pdb
+import re
 import sys
 import os
 import os.path
@@ -110,6 +112,18 @@ class Utils(object):
             return datetime.strptime(value, '%Y-%m-%d')
         except ValueError as e:
             print('Unrecorgnized time format. Error: %s' % e)
+
+    @staticmethod
+    def images_process(line):
+        img_pattern = re.compile(r'(?P<start>!\[.*\]\()(?P<replace>.*)(?P<end>\))')
+        result = img_pattern.search(line)
+        try:
+            newline = line.replace(result.group('replace'), os.path.join('tmp', result.group('replace')))
+        except:
+            return line
+        else:
+            return newline
+
 
     @staticmethod
     def is_subpath(sub, master):

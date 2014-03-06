@@ -27,7 +27,6 @@ class Post(object):
             else:
                 #self._get_imgs()
                 self._process_imgs()
-                pass
         elif os.path.isfile(filepath):
             self._parse_md(filepath)
 
@@ -94,15 +93,10 @@ class Post(object):
         self.bodycontent = Utils.to_unicode(body)
 
     def _process_imgs(self):
-        #img_pattern = re.compile(r'!\[.*\]\((.*)\)')
-        #results = img_pattern.findall(self.bodycontent)
-        #self.imgs = [x for x in set(results)]
-
-        # lookbehind and lookahead re
-        result = re.sub(r'(?<=!\[\]\()(.*)(?=\))',
-                    lambda s: os.path.join(Deployed_folder, 'img', s.group(1)),
-                    self.bodycontent)
-        pdb.set_trace()
+        newcontent = []
+        for line in self.bodycontent.split('\n'):
+            newcontent.append(Utils.images_process(line))
+        self.bodycontent = '\n'.join(newcontent)
 
     def to_html(self):
         env = Environment(loader=FileSystemLoader(Template_path))
@@ -234,9 +228,8 @@ class Page(object):
 
 if __name__ == '__main__':
     #post = Post(r'/tmp/Sources/1.md')
-    post = Post(r'/tmp/Sources/test')
+    post = Post(r'/tmp/Sources/pkg')
     #post._get_imgs()
-    pdb.set_trace()
     #post1 = Post(u'/tmp/Sources/中文.md')
     #post2 = Post(u'/tmp/Sources/1.md')
     #post3 = Post(u'/tmp/Sources/2.md')
