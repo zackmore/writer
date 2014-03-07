@@ -18,6 +18,7 @@ Index_quantity = 2
 Page_quantity = 2
 #Page_quantity = 20
 
+Image_extensions = ['jpg', 'jpeg', 'png', 'gif']
 HTML_extensions = ['html', 'htm', 'shtml', 'cshtml', 'xhtml']
 Markdown_extensions = ['markdown', 'mdown', 'mkdn', 'md', 'mkd',
                     'mdwn', 'mdtxt', 'mdtext', 'text']

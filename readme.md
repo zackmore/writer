@@ -46,6 +46,11 @@ it will generates some paths just like below:
     article1.md
     article2.md
     ...
+    package_md/
+        1.md
+        1.png
+        2.png
+    ...
 
 # Deployed folder:
     index.html
@@ -58,12 +63,15 @@ it will generates some paths just like below:
     ...
     css/
         style.css
+    img/
+        2014-03-07/
+            1.png
+            2.png
 ```
 
 
 ## Todo
 
--   images Dropbox
 -   comment Disqus
 -   Remote Sync local Deploy and server Deploy
 -   category/tags support

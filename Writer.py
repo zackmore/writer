@@ -16,19 +16,8 @@ from config import *
 
 class Post(object):
     def __init__(self, filepath):
-        if os.path.isdir(filepath):
-            mdfiles = [x for x in os.listdir(filepath)\
-                        if x.split('.')[-1] in Markdown_extensions]
-            try:
-                self._parse_md(os.path.join(filepath, mdfiles[0]))
-            except:
-                print('Parse md file failed.')
-                sys.exit()
-            else:
-                #self._get_imgs()
-                self._process_imgs()
-        elif os.path.isfile(filepath):
-            self._parse_md(filepath)
+        self.filepath = os.path.abspath(filepath)
+        self._parse_md(filepath)
 
     @property
     def mtime(self):
@@ -73,32 +62,58 @@ class Post(object):
                                         'fenced-code-blocks']))
 
     def _parse_md(self, filepath):
-        f = open(filepath)
-        header = ''
-        body = ''
-        header_flag = True
-        for line in f:
-            if header_flag and\
-                (line.startswith('---') or line.startswith('===')):
-                header_flag = False
-            elif header_flag:
-                header += line
-            else:
-                body += line
-        f.close()
+        if os.path.isdir(filepath):
+            mdfiles = [x for x in os.listdir(filepath)\
+                        if x.split('.')[-1] in Markdown_extensions]
+            md_path = os.path.join(filepath, mdfiles[0])
+        elif os.path.isfile(filepath):
+            md_path = filepath
 
-        self.filepath = filepath
+        try:
+            f = open(md_path)
+        except:
+            print('Parse markdown file failed.')
+        else:
+            header = ''
+            body = ''
+            header_flag = True
+            for line in f:
+                if header_flag and\
+                    (line.startswith('---') or line.startswith('===')):
+                    header_flag = False
+                elif header_flag:
+                    header += line
+                else:
+                    body += line
+            f.close()
+
         self.metalines = [Utils.to_unicode(line)\
                         for line in header.split('\n') if line]
         self.bodycontent = Utils.to_unicode(body)
 
+        if os.path.isdir(self.filepath):
+            newcontent = []
+            for line in self.bodycontent.split('\n'):
+                newcontent.append(Utils.images_process(Utils.to_time(self.date), line))
+            self.bodycontent = '\n'.join(newcontent)
+
     def _process_imgs(self):
-        newcontent = []
-        for line in self.bodycontent.split('\n'):
-            newcontent.append(Utils.images_process(line))
-        self.bodycontent = '\n'.join(newcontent)
+        img_path = os.path.join(Deployed_folder, 'img', Utils.to_time(self.date))
+        if not os.path.exists(img_path):
+            try:
+                os.makedirs(img_path)
+            except IOError as e:
+                print('Create related img path failed. Error: %s' % e)
+
+        for img in [img for img in os.listdir(self.filepath)\
+                    if img.split('.')[-1] in Image_extensions]:
+            shutil.copyfile(os.path.abspath(os.path.join(self.filepath, img)),
+                            os.path.abspath(os.path.join(img_path, img)))
 
     def to_html(self):
+        if os.path.isdir(self.filepath):
+            self._process_imgs()
+
         env = Environment(loader=FileSystemLoader(Template_path))
         env.filters['showtime'] = Utils.to_time
         template = env.get_template('article.html')
@@ -229,6 +244,7 @@ class Page(object):
 if __name__ == '__main__':
     #post = Post(r'/tmp/Sources/1.md')
     post = Post(r'/tmp/Sources/pkg')
+    post.to_html()
     #post._get_imgs()
     #post1 = Post(u'/tmp/Sources/中文.md')
     #post2 = Post(u'/tmp/Sources/1.md')

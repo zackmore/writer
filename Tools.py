@@ -114,11 +114,14 @@ class Utils(object):
             print('Unrecorgnized time format. Error: %s' % e)
 
     @staticmethod
-    def images_process(line):
-        img_pattern = re.compile(r'(?P<start>!\[.*\]\()(?P<replace>.*)(?P<end>\))')
-        result = img_pattern.search(line)
+    def images_process(date, line):
+        pattern = re.compile(r'(?P<start>!\[.*\]\()(?P<replace>.*)(?P<end>\))')
+        result = pattern.search(line)
         try:
-            newline = line.replace(result.group('replace'), os.path.join('tmp', result.group('replace')))
+            newline = line.replace(result.group('replace'),
+                                    os.path.join('/img',
+                                                date,
+                                                result.group('replace')))
         except:
             return line
         else:
