@@ -45,8 +45,7 @@ def main():
                 if not Utils.is_subpath(path, Source_folder):
                     shutil.move(path, Source_folder)
 
-        all_mds = [a for a in os.listdir(Source_folder)\
-                    if a.split('.')[-1] in Markdown_extensions]
+        all_mds = [a for a in os.listdir(Source_folder)]
         postlist = []
         for path in all_mds:
             post = Post(os.path.join(Source_folder, path))

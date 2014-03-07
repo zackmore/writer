@@ -101,7 +101,7 @@ class Post(object):
         img_path = os.path.join(Deployed_folder, 'img', Utils.to_time(self.date))
         if not os.path.exists(img_path):
             try:
-                os.makedirs(img_path)
+                os.makedirs(img_path, '0755')
             except IOError as e:
                 print('Create related img path failed. Error: %s' % e)
 
@@ -202,7 +202,7 @@ class Page(object):
             template = env.get_template('page.html')
             try:
                 if not os.path.isdir(os.path.join(Deployed_folder, 'page')):
-                    os.mkdir(os.path.join(Deployed_folder, 'page'))
+                    os.mkdir(os.path.join(Deployed_folder, 'page'), '0755')
 
                 f = codecs.open(
                         os.path.join(Deployed_folder,

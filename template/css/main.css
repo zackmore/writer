@@ -119,7 +119,7 @@ body, ul, ol{
 }
 
 body{
-    font: 16px/1.8 Georgia, serif;
+    font: 1em/1.8 Georgia, serif;
     border-top: .1875em solid #000;
 }
 
@@ -179,17 +179,17 @@ section{
     color: #c00;
 }
 
-ul#list{
+#list{
     list-style: none;
     padding: 0 .625em;
 }
 
-ul#list li{
+#list li{
     margin-bottom: 2em;
     word-wrap: break-word;
 }
 
-ul#list li em{
+#list li em{
     display: block;
     float: left;
     line-height: 1;
@@ -200,14 +200,14 @@ ul#list li em{
     padding-top: .286em;
 }
 
-ul#list li a{
+#list li a{
     display: block;
     text-decoration: none;
     color: #222;
     margin-left: 3em;
 }
 
-ul#list li a h2{
+#list li a h2{
     font-size: 1.125em;
     font-family: Microsoft YaHei, Helvetica, sans-serif;
     font-weight: bold;
@@ -215,43 +215,87 @@ ul#list li a h2{
     margin: 0;
 }
 
-ul#list li a p{
+#list li a p{
     line-height: 1.5;
     margin: 0;
 }
 
-ul#list li a:hover h2{
+#list li a:hover h2{
     text-decoration: underline;
     color: #c00;
 }
 
 /* Article */
 
-section#article{
+#article{
     padding: 0 .625em;
 }
 
-section#article hgroup{
+#article h2,
+#article h3{
+}
+
+#article hgroup{
     margin: 2.25em 0 1.5em;
 }
 
-section#article h1.title{
+#article .title{
+    font-family: Helvetica, Microsoft YaHei, sans-serif;
     font-weight: normal;
     font-size: 1.5em;
     line-height: 1.2;
     margin: 0;
 }
 
-section#article h2.date{
+#article .date{
     font-weight: normal;
     font-size: .875em;
     margin: 0;
-    color: #999
+    color: #999;
+    text-align: left;
 }
 
-section#article p{
+#article img{
+    max-width: 100%;
+}
+
+#article img ~ em{
+    color: #999;
+    font-style: normal;
+    font-size: .8125em;
+}
+
+#article ul, #article ol{
+    margin: .5em 0 1.5em;
+    padding-left: 1em;
+    list-style-position: inside;
+}
+
+#article ul p,
+#article ol p{
+    margin: 0;
+}
+
+#article p{
     margin: .5em 0 1.5em;
 }
+
+#article p a{
+    color: #c00;
+}
+
+#article code,
+#article pre{
+    font-family: Consolas, 'Liberation Mono', Courier, monospace;
+    font-size: .75em;
+    line-height: 1.5;
+    margin: 0;
+}
+
+#article > div{
+    margin: .5em 0 1.5em;
+}
+
 
 footer{
     background: #000;
@@ -272,7 +316,7 @@ footer .inner a{
 
 @media only screen and (min-width: 321px) {
 
-section#article, ul#list, footer{
+#article, #list, footer{
     padding: 0;
 }
 
