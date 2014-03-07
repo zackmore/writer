@@ -66,13 +66,18 @@ class Post(object):
             mdfiles = [x for x in os.listdir(filepath)\
                         if x.split('.')[-1] in Markdown_extensions]
             md_path = os.path.join(filepath, mdfiles[0])
-        elif os.path.isfile(filepath):
+        elif (os.path.isfile(filepath) and
+                filepath.split('.')[-1] in Markdown_extensions):
             md_path = filepath
+        else:
+            print('Not a valid filepath, need markdown file\
+                    or A directory contains markdown file)')
+            sys.exit()
 
         try:
             f = open(md_path)
         except:
-            print('Parse markdown file failed.')
+            print('Open markdown file failed.')
         else:
             header = ''
             body = ''
@@ -101,7 +106,7 @@ class Post(object):
         img_path = os.path.join(Deployed_folder, 'img', Utils.to_time(self.date))
         if not os.path.exists(img_path):
             try:
-                os.makedirs(img_path, '0755')
+                os.makedirs(img_path, 0755)
             except IOError as e:
                 print('Create related img path failed. Error: %s' % e)
 
@@ -122,7 +127,9 @@ class Post(object):
                     os.path.join(Deployed_folder, self.htmlfile),
                     'w',
                     'utf-8')
-            f.write(template.render(article=self))
+            f.write(template.render(article=self,
+                                    page_title=self.title,
+                                    description=self.description))
             f.close()
         except IOError as e:
             print('Build article failed. Error: %s' % e)
@@ -202,7 +209,7 @@ class Page(object):
             template = env.get_template('page.html')
             try:
                 if not os.path.isdir(os.path.join(Deployed_folder, 'page')):
-                    os.mkdir(os.path.join(Deployed_folder, 'page'), '0755')
+                    os.mkdir(os.path.join(Deployed_folder, 'page'), 0755)
 
                 f = codecs.open(
                         os.path.join(Deployed_folder,
@@ -213,6 +220,7 @@ class Page(object):
                 f.write(template.render(
                         articles=self.sorted_postlist\
                                 [pagination.start_point:pagination.end_point],
+                        page_title=Blog_name+' Page '+str(pagination.page_number),
                         pages_flag=pages_flag,
                         pagination=pagination))
                 f.close()
@@ -235,6 +243,7 @@ class Page(object):
                     'utf-8')
             f.write(template.render(
                         articles=self.sorted_postlist[:Index_quantity],
+                        page_title=Blog_name,
                         pages=pages))
             f.close()
         except IOError as e:

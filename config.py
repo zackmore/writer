@@ -2,11 +2,9 @@
 
 import os.path
 
-#Source_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                #'Sources'))
+Blog_name = 'Zlog'
+
 Source_folder = '/tmp/Sources'
-#Deployed_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                #'Deploy'))
 Deployed_folder = '/tmp/Deploy'
 
 Template_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
@@ -14,9 +12,8 @@ Template_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
 
 # The items quantity of one page
 Page_sort = 'desc' # 'desc' or 'asc'
-Index_quantity = 2
-Page_quantity = 2
-#Page_quantity = 20
+Index_quantity = 1
+Page_quantity = 1 
 
 Image_extensions = ['jpg', 'jpeg', 'png', 'gif']
 HTML_extensions = ['html', 'htm', 'shtml', 'cshtml', 'xhtml']

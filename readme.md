@@ -75,5 +75,4 @@ it will generates some paths just like below:
 -   comment Disqus
 -   Remote Sync local Deploy and server Deploy
 -   category/tags support
--   additional increment build (with SQLite)
 -   Source Folder monitor

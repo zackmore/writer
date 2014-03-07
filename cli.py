@@ -6,9 +6,9 @@ from Writer import *
 
 documentation = {}
 documentation['help'] = '''Writer
-    writer init                         Create the needed path
-    writer build [filepath, ...]        Build Html(s)
-    writer help                         Show this information
+    writer init                                 Create the needed path
+    writer build [--test] [filepath, ...]       Build Html(s)
+    writer help                                 Show this information
 '''  
 
 documentation['init'] = '''
@@ -27,8 +27,10 @@ Change all Markdown files in Source folder to HTML files in Deploy folder. If fi
 
 def main():
     command = 'help'
+
     if len(sys.argv[1]):
         command = sys.argv[1]
+
     if command == 'help':
         if not sys.argv[2]:
             print(documentation['help'])
@@ -36,16 +38,18 @@ def main():
             print(documentation['init'])
         elif sys.argv[2] == 'build':
             print(documentation['build'])
+
     if command == 'init':
         Tool.check_folders()
         Tool.init_folders()
+
     if command == 'build':
         if len(sys.argv[2:]):
             for path in sys.argv[2:]:
                 if not Utils.is_subpath(path, Source_folder):
                     shutil.move(path, Source_folder)
 
-        all_mds = [a for a in os.listdir(Source_folder)]
+        all_mds = [ os.path.join(Source_folder, x) for x in os.listdir(Source_folder)]
         postlist = []
         for path in all_mds:
             post = Post(os.path.join(Source_folder, path))
