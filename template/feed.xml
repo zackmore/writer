@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>{{ blog_name }}</title>
+    <link href="{{ blog_url }}" rel="self" />
+    <link href="{{ blog_url }}" />
+    <updated>{{ updated_time }}</updated>
+    <id>{{ blog_url }}</id>
+    {% for article in articles %}
+    <entry>
+        <title type="html"><![CDATA[{{ article.title }}]]></title>
+        <link href="{{ article.url }}" />
+        <published>{{ article.date }}</published>
+        <id>{{ article.url }}</id>
+        <content type="html" xml:base="{{ blog_url }}">
+            <![CDATA[ {{ article.content }} ]]>
+        </content>
+    </entry>
+    {% endfor %}
+</feed>

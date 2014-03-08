@@ -3,17 +3,19 @@
 import os.path
 
 Blog_name = 'Zlog'
+Blog_url = 'http://zengq.in'
 
-Source_folder = '/tmp/Sources'
-Deployed_folder = '/tmp/Deploy'
+Source_folder = '/home/zack/Workspace/Git/writer/Sources'
+Deployed_folder = '/home/zack/Workspace/Git/writer/Deploy'
 
 Template_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
                 'template'))
 
 # The items quantity of one page
 Page_sort = 'desc' # 'desc' or 'asc'
-Index_quantity = 1
-Page_quantity = 1 
+Index_quantity = 10
+Page_quantity = 10 
+Feed_quantity = 10
 
 Image_extensions = ['jpg', 'jpeg', 'png', 'gif']
 HTML_extensions = ['html', 'htm', 'shtml', 'cshtml', 'xhtml']

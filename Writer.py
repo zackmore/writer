@@ -208,7 +208,7 @@ class Page(object):
             env = Environment(loader=FileSystemLoader(Template_path))
             template = env.get_template('page.html')
             try:
-                if not os.path.isdir(os.path.join(Deployed_folder, 'page')):
+                if not os.path.exists(os.path.join(Deployed_folder, 'page')):
                     os.mkdir(os.path.join(Deployed_folder, 'page'), 0755)
 
                 f = codecs.open(
@@ -248,6 +248,24 @@ class Page(object):
             f.close()
         except IOError as e:
             print('Build index failed. Error: %s' % e)
+
+    def to_feedxml(self):
+        self._sort_postlist()
+
+        env = Environment(loader=FileSystemLoader(Template_path))
+        template = env.get_template('feed.xml')
+        try:
+            f = codecs.open(
+                    os.path.join(Deployed_folder, 'feed.xml'),
+                    'w',
+                    'utf-8')
+            f.write(template.render(
+                        blog_name=Blog_name,
+                        updated_time=Utils.to_time(datetime.datetime.now()),
+                        articles=self.sorted_postlist[:Feed_quantity]))
+            f.close()
+        except IOError as e:
+            print('Build feed failed. Error: %s' % e)
         
 
 if __name__ == '__main__':

@@ -58,6 +58,7 @@ def main():
         page = Page(postlist)
         page.to_pagehtml()
         page.to_indexhtml()
+        page.to_feedxml()
 
 if __name__ == '__main__':
     main()
