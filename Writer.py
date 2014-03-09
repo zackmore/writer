@@ -261,7 +261,8 @@ class Page(object):
                     'utf-8')
             f.write(template.render(
                         blog_name=Blog_name,
-                        updated_time=Utils.to_time(datetime.datetime.now()),
+                        blog_url=Blog_url,
+                        updated_time=Utils.to_time(datetime.now()),
                         articles=self.sorted_postlist[:Feed_quantity]))
             f.close()
         except IOError as e:
