@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
+import pdb
 
 import sys
+import subprocess
+import shlex
+
+from config import *
 from Tools import *
 from Writer import *
+
 
 documentation = {}
 documentation['help'] = '''Writer
     writer init                                 Create the needed path
-    writer build [--test] [filepath, ...]       Build Html(s)
+    writer build [test] [filepath, ...]         Build Html(s)
+    writer pull                                 Get Source and Deploy from your server
+    wrtier push                                 Push your Source and Deploy to your server
     writer help                                 Show this information
 '''  
 
@@ -23,6 +31,18 @@ documentation['build'] = '''
 Usage: python cli.py build [filepath, ...]
 
 Change all Markdown files in Source folder to HTML files in Deploy folder. If filepath offered, will check if it is in Source folder, if not, will move the file in Source and then change.
+'''
+
+documentation['push'] = '''
+Usage: python cli.py push
+
+Push your Source and Deploy to your server
+'''
+
+documentation['pull'] = '''
+Usage: python cli.py pull
+
+Get Source and Deploy from your server
 '''
 
 def main():
@@ -59,6 +79,31 @@ def main():
         page.to_pagehtml()
         page.to_indexhtml()
         page.to_feedxml()
+
+    if command == 'push' or command == 'pull':
+        local = Article_folder
+        server = Remote_server_user + '@' + Remote_server + ':' + Remote_server_path
+
+        if not os.path.exists(local):
+            try:
+                os.makedirs(local, 0755)
+            except IOError as e:
+                print('Create local Article folder failed. Error: %s' % e)
+
+        if not server.endswith('/'):
+            server += '/'
+        if not local.endswith('/'):
+            local += '/'
+
+        sub_command = 'rsync -aP -e "ssh -p %s" ' % Remote_server_port
+
+        if command == 'push':
+            sub_command += local + ' ' + server
+        if command == 'pull':
+            sub_command += server + ' ' + local
+
+        subprocess.call(shlex.split(sub_command))
+
 
 if __name__ == '__main__':
     main()

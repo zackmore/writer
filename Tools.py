@@ -21,7 +21,7 @@ class Tool(object):
         '''
         if not os.path.exists(Source_folder):
             try:
-                os.mkdir(Source_folder, 0755)
+                os.makedirs(Source_folder, 0755)
             except OSError as e:
                 print('Make source folder failed. Error: %s' % e)
         else:
@@ -31,7 +31,7 @@ class Tool(object):
 
         if not os.path.exists(Deployed_folder):
             try:
-                os.mkdir(Deployed_folder, 0755)
+                os.makedirs(Deployed_folder, 0755)
             except OSError as e:
                 print('Make deploy folder failed. Error: %s' % e)
         else:

@@ -12,6 +12,14 @@ Yet another static blog generator. I just need a simple tool that can turn my ma
 
     Build Htmls
 
+-   `python cli.py push
+
+    Push your Source and Deploy to your server
+
+-   `python cli.py pull
+
+    Get Source and Deploy from your server
+
 -   `python cli.py help`
 
     Show help information
@@ -73,6 +81,5 @@ it will generates some paths just like below:
 ## Todo
 
 -   comment Disqus
--   Remote Sync local Deploy and server Deploy
 -   category/tags support
 -   Source Folder monitor
