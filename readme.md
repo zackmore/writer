@@ -2,6 +2,14 @@
 
 Yet another static blog generator. I just need a simple tool that can turn my markdown files to html files, and put them directly at the server root path. And also my requirements are very simple at first: only pagination, no category/tags support, no additional increment build. But these features will be implement later.
 
+## Quick Start
+
+1.  Edit `config.py`
+2.  `python cli.py init`
+3.  Put your md file or directory (including a markdown file and images) in Source_folder
+4.  `python cli.py build`
+5.  `python cli.py push`
+
 ## Usage
 
 -   `python cli.py init`
