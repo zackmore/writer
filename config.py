@@ -5,7 +5,7 @@ import os.path
 Blog_name = 'Zlog'
 Blog_url = 'http://zengq.in/'
 
-Article_folder = '/home/zack/Workspace/Git/writer/Articles/'
+Article_folder = '/home/zack/Workspace/Git/writer/Article/'
 Source_folder = os.path.join(Article_folder, 'Source')
 Deployed_folder = os.path.join(Article_folder, 'Deploy')
 

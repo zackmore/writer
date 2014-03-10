@@ -33,6 +33,12 @@ Usage: python cli.py build [filepath, ...]
 Change all Markdown files in Source folder to HTML files in Deploy folder. If filepath offered, will check if it is in Source folder, if not, will move the file in Source and then change.
 '''
 
+documentation['test'] = '''
+Usage: python cli.py test [filepath, ...]
+
+Check if there is any possible will replace the existed articles.
+'''
+
 documentation['push'] = '''
 Usage: python cli.py push
 
@@ -63,13 +69,32 @@ def main():
         Tool.check_folders()
         Tool.init_folders()
 
+    if command == 'test':
+        if len(sys.argv[2:]):
+            for path in sys.argv[2:]:
+                if not Utils.is_subpath(path, Source_folder):
+                    shutil.move(path, Source_folder)
+
+        all_mds = [os.path.join(Source_folder, x) for x in os.listdir(Source_folder)]
+        conflict = []
+        for path in all_mds:
+            post = Post(os.path.join(Source_folder, path))
+            if os.path.exists(os.path.join(Deployed_folder, post.htmlfile)):
+                conflict.append(post)
+
+        if len(conflict):
+            for p in conflict:
+                print('%s will be conflicted.[%s]' % (p.htmlfile, p.filepath))
+        else:
+            print('No conflict.')
+
     if command == 'build':
         if len(sys.argv[2:]):
             for path in sys.argv[2:]:
                 if not Utils.is_subpath(path, Source_folder):
                     shutil.move(path, Source_folder)
 
-        all_mds = [ os.path.join(Source_folder, x) for x in os.listdir(Source_folder)]
+        all_mds = [os.path.join(Source_folder, x) for x in os.listdir(Source_folder)]
         postlist = []
         for path in all_mds:
             post = Post(os.path.join(Source_folder, path))

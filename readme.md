@@ -8,15 +8,19 @@ Yet another static blog generator. I just need a simple tool that can turn my ma
 
     Created needed paths
 
--   `python cli.py build [-p] [filepath, filepath, ...]`
+-   `python cli.py build [filepath, filepath, ...]`
 
     Build Htmls
 
--   `python cli.py push
+-   `python cli.py test [filepath, filepath, ...]`
+
+    Check for build results
+
+-   `python cli.py push`
 
     Push your Source and Deploy to your server
 
--   `python cli.py pull
+-   `python cli.py pull`
 
     Get Source and Deploy from your server
 
