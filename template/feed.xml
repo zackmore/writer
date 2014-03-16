@@ -12,7 +12,7 @@
         <published>{{ article.date }}</published>
         <id>{{ article.url }}</id>
         <content type="html" xml:base="{{ blog_url }}">
-            <![CDATA[ {{ article.content }} ]]>
+            <p>{{ article.feedcontent }}</p>
         </content>
     </entry>
     {% endfor %}

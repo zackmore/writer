@@ -56,6 +56,11 @@ class Post(object):
                 return line.split(':', 1)[1].strip()
 
     @property
+    def feedcontent(self):
+        bodylines = [line for line in self.bodycontent.split('\n') if len(line)]
+        return bodylines[0]
+
+    @property
     def content(self):
         return Utils.to_unicode(markdown2.markdown(self.bodycontent,
                                 extras=['code-friendly',
@@ -270,28 +275,5 @@ class Page(object):
         
 
 if __name__ == '__main__':
-    #post = Post(r'/tmp/Sources/1.md')
-    post = Post(r'/tmp/Sources/pkg')
-    post.to_html()
-    #post._get_imgs()
-    #post1 = Post(u'/tmp/Sources/中文.md')
-    #post2 = Post(u'/tmp/Sources/1.md')
-    #post3 = Post(u'/tmp/Sources/2.md')
-    #post4 = Post(u'/tmp/Sources/3.md')
-
-    #page = Page([post1, post2, post3, post4])
-    #post1.to_html()
-    #post2.to_html()
-    #post3.to_html()
-    #post4.to_html()
-    #page.to_indexhtml()
-    #page.to_pagehtml()
-    #post.to_html()
-    #writer = Writer()
-    #writer.generate_article(u'/tmp/Sources/中文2.md')
-    #writer.generate_index(writer._sort_articles());
-    #writer.generate_page(writer._sort_articles());
-    #writer.generate_article('/tmp/Sources/2.md')
-    #writer.generate_article('/tmp/Sources/3.md')
-    #writer.generate_article('/tmp/Sources/4.md')
-    #writer._sort_articles()
+    post = Post('/home/zack/Output/blog/Source/postrock.md')
+    pdb.set_trace()
