@@ -57,8 +57,12 @@ class Post(object):
 
     @property
     def feedcontent(self):
-        bodylines = [line for line in self.bodycontent.split('\n') if len(line)]
-        return bodylines[0]
+        bodycontent = self.bodycontent.replace('\r', '')
+        bodylines = [line.strip() for line in bodycontent.split('\n\n') if len(line)]
+        for line in bodylines:
+            if len(line):
+                return line
+            break
 
     @property
     def content(self):
@@ -275,5 +279,5 @@ class Page(object):
         
 
 if __name__ == '__main__':
-    post = Post('/home/zack/Output/blog/Source/postrock.md')
+    post = Post('/home/zack/Output/blog/Source/Kindle线上文档批量删除')
     pdb.set_trace()
