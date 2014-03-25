@@ -92,6 +92,7 @@ it will generates some paths just like below:
 
 ## Todo
 
+-   multi-build
 -   comment Disqus
 -   category/tags support
 -   Source Folder monitor

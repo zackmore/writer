@@ -1,5 +1,4 @@
 # -*- coding: utf -*-
-import pdb
 
 import os
 import os.path
@@ -276,8 +275,3 @@ class Page(object):
             f.close()
         except IOError as e:
             print('Build feed failed. Error: %s' % e)
-        
-
-if __name__ == '__main__':
-    post = Post('/home/zack/Output/blog/Source/Kindle线上文档批量删除')
-    pdb.set_trace()
