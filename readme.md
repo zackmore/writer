@@ -1,6 +1,6 @@
 # writer
 
-Yet another static blog generator. I just need a simple tool that can turn my markdown files to html files, and put them directly at the server root path. And also my requirements are very simple at first: only pagination, no category/tags support, no additional increment build. But these features will be implement later.
+Yet another static blog generator. A simple tool that can turn  markdown files to html files, and put them directly at the server root path. And it also very simple: only pagination, no category/tags support, no additional increment build.
 
 ## Quick Start
 
@@ -47,52 +47,21 @@ When you `python cli.py init`, follows will happen:
 -   Check if there is md files already existed in source folder
 -   Generate the html files (will remove all the existed html files first)
 
-it will generates some paths just like below:
+A valid source file should be like this:
 
 ```
-# Project folder:
-    cli.py      (command line)
-    config.py   (including options)
-    Tools.py    (cli.py invoke this file)
-    Writer.py   (.md to .html, and output page/index.html)
-    template/
-        Index.html
-        Page.html
-        Article.html
-        css/
-            style.css
+Title: Your article title
+Date: YYYY-mm-dd
+Description: some words
 
-# Source folder
-    article1.md
-    article2.md
-    ...
-    package_md/
-        1.md
-        1.png
-        2.png
-    ...
+================ (or '-------------', at least 3 characters)
 
-# Deployed folder:
-    index.html
-    page/
-        1.html
-        2.html
-        ...
-    article1.html
-    article2.html
-    ...
-    css/
-        style.css
-    img/
-        2014-03-07/
-            1.png
-            2.png
+And here goes the markdown format content.
 ```
 
+The `Title` `Date` `Description` are all optional. `Description` will be an empty string if not set; `Date` will be the **first** build time and its format is also `YYYY-mm-dd`; `Title` will be as `YYYY-mm-dd-sourcefilename` is not set. I recommand you should set all the 'header' information manually for a better content control.
 
 ## Todo
 
 -   multi-build
 -   comment Disqus
--   category/tags support
--   Source Folder monitor
