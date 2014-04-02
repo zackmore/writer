@@ -1,4 +1,4 @@
-# -*- coding: utf -*-
+# -*- coding: utf-8 -*-
 
 import os
 import os.path
@@ -78,8 +78,7 @@ class Post(object):
                 filepath.split('.')[-1] in Markdown_extensions):
             md_path = filepath
         else:
-            print('Not a valid filepath, need markdown file\
-                    or A directory contains markdown file)')
+            print('Not a valid filepath, need markdown file or A directory contains markdown file)')
             sys.exit()
 
         try:

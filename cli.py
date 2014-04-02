@@ -74,7 +74,8 @@ def main():
                 if not Utils.is_subpath(path, Source_folder):
                     shutil.move(path, Source_folder)
 
-        all_mds = [os.path.join(Source_folder, x) for x in os.listdir(Source_folder)]
+        all_mds = [os.path.join(Source_folder, x) for x in os.listdir(Source_folder)\
+                       if x.split('.')[-1] in Markdown_extensions]
         conflict = []
         for path in all_mds:
             post = Post(os.path.join(Source_folder, path))
@@ -93,7 +94,8 @@ def main():
                 if not Utils.is_subpath(path, Source_folder):
                     shutil.move(path, Source_folder)
 
-        all_mds = [os.path.join(Source_folder, x) for x in os.listdir(Source_folder)]
+        all_mds = [os.path.join(Source_folder, x) for x in os.listdir(Source_folder)\
+                       if x.split('.')[-1] in Markdown_extensions]
         postlist = []
         for path in all_mds:
             post = Post(os.path.join(Source_folder, path))
