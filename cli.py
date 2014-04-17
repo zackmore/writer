@@ -75,7 +75,7 @@ def main():
                     shutil.move(path, Source_folder)
 
         all_mds = [os.path.join(Source_folder, x) for x in os.listdir(Source_folder)\
-                       if x.split('.')[-1] in Markdown_extensions]
+                       if x.split('.')[-1] in Markdown_extensions or os.path.isdir(os.path.join(Source_folder, x))]
         conflict = []
         for path in all_mds:
             post = Post(os.path.join(Source_folder, path))
@@ -95,7 +95,7 @@ def main():
                     shutil.move(path, Source_folder)
 
         all_mds = [os.path.join(Source_folder, x) for x in os.listdir(Source_folder)\
-                       if x.split('.')[-1] in Markdown_extensions]
+                       if x.split('.')[-1] in Markdown_extensions or os.path.isdir(os.path.join(Source_folder, x))]
         postlist = []
         for path in all_mds:
             post = Post(os.path.join(Source_folder, path))
